@@ -1,0 +1,93 @@
+option name = "ntt-workflow-driver";
+option app_label = "ntt-workflow-driver";
+
+message NttWorkflowDriverService (Service){
+    option verbose_name = "NttWorkflowDriver Service";
+    option kind = "control";
+    option description = "Service that manages the EPON subscriber workflow";
+}
+
+message NttWorkflowDriverServiceInstance (ServiceInstance){
+    option owner_class_name = "NttWorkflowDriverService";
+    option verbose_name = "NttWorkflowDriver Service Instance";
+    option description = "Workflow settings for a particular ONU Device";
+    option policy_implemented = "True";
+
+    required string serial_number = 2 [
+        help_text = "Serial number of ONU",
+        max_length = 256,
+        tosca_key=True,
+        unique = True];
+    required string authentication_state = 3 [
+        help_text = "Subscriber authentication state",
+        choices = "(('AWAITING', 'Awaiting'), ('STARTED', 'Started'), ('REQUESTED', 'Requested'), ('APPROVED', 'Approved'), ('DENIED', 'Denied'), )",
+        default = "AWAITING",
+        feedback_state = True,
+        max_length = 50];
+    required string of_dpid = 4 [
+        help_text = "OLT MAC address",
+        max_length = 256];
+    required int32 uni_port_id = 5 [
+        help_text = "ONU UNI port ID"];
+    required string admin_onu_state = 6 [
+        help_text = "ONU administrative state",
+        choices = "(('AWAITING', 'Awaiting'), ('ENABLED', 'Enabled'), ('DISABLED', 'Disabled'))",
+        default = "AWAITING",
+        feedback_state = True,
+        max_length = 256];
+    optional string status_message = 7 [
+        help_text = "Status text of current state machine state",
+        default = "",
+        max_length = 256];
+    
+    optional string mac_address = 10 [
+        help_text = "Subscriber MAC address",
+        feedback_state = True,
+        max_length = 20];
+    required string oper_onu_status = 11 [
+        help_text = "ONU operational state",
+        choices = "(('AWAITING', 'Awaiting'), ('ENABLED', 'Enabled'), ('DISABLED', 'Disabled'))",
+        default = "AWAITING",
+        feedback_state = True,
+        max_length = 256];
+}
+
+message NttWorkflowDriverWhiteListEntry (XOSBase) {
+    option verbose_name = "ONU Whitelist";
+    option plural = "nttworkflowdriverwhitelistentries";
+    option description = "White list entry";
+    option policy_implemented = "True";
+
+    required manytoone owner->NttWorkflowDriverService:whitelist_entries = 1:1001 [
+        help_text = "NttWorkflowDriverService that owns this white list entry",
+        db_index = True,
+        tosca_key = True];
+    optional string mac_address = 2 [
+        help_text = "ONU MAC Address for package A authentication",
+        max_length = 256,
+        tosca_key = True];
+    required int32 pon_port_from = 3 [
+        help_text = "Start ID of approved PON Port"];
+    required int32 pon_port_to = 4 [
+        help_text = "End ID of approved PON Port"];
+}
+
+message NttWorkflowDriverOltInformation (ServiceInstance){
+    option owner_class_name = "NttWorkflowDriverService";
+    option verbose_name = "NttWorkflowDriver Olt Information";
+    option description = "OLT information";
+    option policy_implemented = "True";
+
+    required string of_dpid = 2 [
+        help_text = "OLT MAC address",
+        max_length = 256];
+    optional string olt_location = 3 [
+        help_text = "OLT location",
+        max_length = 256];
+    optional string olt_package = 4 [
+        help_text = "Package",
+        max_length = 256];
+    optional uint32 port_no = 5 [
+        help_text = "Port number",
+        max_length = 256];
+}

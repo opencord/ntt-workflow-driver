@@ -1,0 +1,3 @@
+xossynchronizer~=4.0.1
+xosapi~=4.0.1
+xoskafka~=4.0.1
