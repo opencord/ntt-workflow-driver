@@ -68,7 +68,7 @@ class NttHelpers():
             elif ntt_si.authentication_state != "APPROVED":
                 return [True, "IEEE802.1X authentication has not been done yet."]
         else:
-            pass
+            ntt_si.authentication_state = "APPROVED"
 
         log.debug("Adding subscriber with info",
             uni_port_id = ntt_si.uni_port_id,
